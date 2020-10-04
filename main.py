@@ -112,11 +112,10 @@ def main():
                                       momentum=args.momentum, weight_decay=5e-4)
 
         origin_train(args, model, device, train_loader, optimizer, epoch)
-        test(args, model, device, test_loader)
+        test(args, model, device, test_loader, epoch)
 
 
-
-def test(args, model, device, test_loader):
+def test(args, model, device, test_loader, epoch):
     model.eval()
     test_loss = 0
     correct = 0
@@ -132,8 +131,8 @@ def test(args, model, device, test_loader):
 
     test_loss /= len(test_loader.dataset)
 
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
+    print('\nTest Epoch {}: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
+        epoch, test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
     return correct / len(test_loader.dataset)
 

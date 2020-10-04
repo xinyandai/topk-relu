@@ -7,6 +7,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from .topkrelu import TopkReluFunc
+from .topkrelu import TopkReLU
+# NN_ReLU = nn.ReLU
+# F_relu = F.relu
+
+NN_ReLU = TopkReLU
+F_relu = TopkReluFunc.apply
+
 
 class ResidualBlock(nn.Module):
     expansion = 1
@@ -17,7 +25,7 @@ class ResidualBlock(nn.Module):
             nn.Conv2d(inchannel, outchannel, kernel_size=3,
                       stride=stride, padding=1, bias=False),
             nn.BatchNorm2d(outchannel),
-            nn.ReLU(inplace=True),
+            NN_ReLU(inplace=True),
             nn.Conv2d(outchannel, outchannel, kernel_size=3,
                       stride=1, padding=1, bias=False),
             nn.BatchNorm2d(outchannel)
@@ -33,7 +41,7 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         out = self.left(x)
         out += self.shortcut(x)
-        out = F.relu(out)
+        out = F_relu(out)
         return out
 
 
@@ -57,11 +65,11 @@ class Bottleneck(nn.Module):
             )
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = F.relu(self.bn2(self.conv2(out)))
+        out = F_relu(self.bn1(self.conv1(x)))
+        out = F_relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
         out += self.shortcut(x)
-        out = F.relu(out)
+        out = F_relu(out)
         return out
 
 
@@ -72,7 +80,7 @@ class ResNet(nn.Module):
         self.conv1 = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(64),
-            nn.ReLU(),
+            NN_ReLU(),
         )
         self.layer1 = self.make_layer(block, 64,  num_blocks[0], stride=1)
         self.layer2 = self.make_layer(block, 128, num_blocks[1], stride=2)
