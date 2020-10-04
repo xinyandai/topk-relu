@@ -2,6 +2,7 @@ from abc import ABC
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 from torch.autograd import Function
 
 
@@ -33,4 +34,7 @@ class TopkReLU(nn.Module):
         self.inplace = inplace
 
     def forward(self, x):
-        return TopkReluFunc.apply(x)
+        if x.size(-1) > 64:
+            return TopkReluFunc.apply(x)
+        else:
+            return F.relu(x)
