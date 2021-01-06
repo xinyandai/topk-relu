@@ -97,8 +97,8 @@ def main():
                           momentum=args.momentum, weight_decay=args.weight_decay)
 
     if args.dataset == 'mnist':
-        epochs = []
-        lrs = []
+        epochs = [5, 10]
+        lrs = [0.01, 0.001]
         args.epochs = 20
     else:
         epochs = [51, 71]

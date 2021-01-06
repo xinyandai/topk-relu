@@ -7,13 +7,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .topkrelu import TopkReluFunc
+from .topkrelu import F_topk_relu
 from .topkrelu import TopkReLU
 # NN_ReLU = nn.ReLU
 # F_relu = F.relu
 
 NN_ReLU = TopkReLU
-F_relu = TopkReluFunc.apply
+F_relu = F_topk_relu
 
 
 class ResidualBlock(nn.Module):

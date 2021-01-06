@@ -25,8 +25,14 @@ class TopkReluFunc(Function):
     def backward(ctx, g):
         x = ctx.saved_variables[0]
         k = max(x.size(-1) // 8, 1)
-        return g * (x > 0).type(g.type())
+        return g * (x != 0).type(g.type())
 
+def F_topk_relu(x):
+    #return F.relu(x)
+    if x.size(-1) > 256:
+        return TopkReluFunc.apply(x)
+    else:
+        return F.relu(x)
 
 class TopkReLU(nn.Module):
     def __init__(self, inplace=False):
@@ -34,7 +40,5 @@ class TopkReLU(nn.Module):
         self.inplace = inplace
 
     def forward(self, x):
-        if x.size(-1) > 64:
-            return TopkReluFunc.apply(x)
-        else:
-            return F.relu(x)
+        return F_topk_relu(x)
+
